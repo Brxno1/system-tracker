@@ -6,9 +6,8 @@ import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/lib/utils'
 import { HouseList } from './house-list'
 import { AddHouseDialog } from './add-house-dialog'
-import { DropZone } from './update-flow/drop-zone'
 import { ConfirmDialog } from './update-flow/confirm-dialog'
-import { parseBankrollScreenshot } from '@/lib/ai/parse-bankroll'
+import { ChatInterface } from '../ai-chat'
 import type { HouseBalance } from '@/types'
 import type { ParsedBankroll } from '@/lib/ai/schemas'
 
@@ -23,7 +22,6 @@ export function Bankroll() {
  const [houseToEdit, setHouseToEdit] = useState<HouseBalance | null>(null)
 
  // AI Flow States
- const [isProcessing, setIsProcessing] = useState(false)
  const [parsedData, setParsedData] = useState<ParsedBankroll | null>(null)
  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
 
@@ -54,20 +52,6 @@ export function Bankroll() {
   setIsDialogOpen(false)
  }
 
- const handleImageDropped = async (base64: string) => {
-  try {
-   setIsProcessing(true)
-   const result = await parseBankrollScreenshot(base64)
-   setParsedData(result)
-   setIsConfirmOpen(true)
-  } catch (error) {
-   console.error('Falha ao processar imagem:', error)
-   alert('Não foi possível ler a imagem. Tente novamente ou insira manualmente.')
-  } finally {
-   setIsProcessing(false)
-  }
- }
-
  const handleConfirmAI = async () => {
   if (parsedData) {
    await updateMultipleHouses(parsedData.houses)
@@ -77,8 +61,8 @@ export function Bankroll() {
  }
 
  return (
-  <div className="space-y-6">
-   <div className="flex items-center justify-between">
+  <div className="space-y-6 h-[calc(100vh-100px)] flex flex-col">
+   <div className="flex items-center justify-between shrink-0">
     <h1 className="text-2xl font-bold tracking-tight">Gestão de Banca</h1>
     <Button onClick={handleAdd}>
      <Plus className="mr-2 h-4 w-4" />
@@ -86,19 +70,31 @@ export function Bankroll() {
     </Button>
    </div>
 
-   <div className="grid gap-4 md:grid-cols-3">
+   <div className="grid gap-4 md:grid-cols-3 shrink-0">
     <KPICard label="Banca Total" value={formatCurrency(totalBankroll)} />
     <KPICard label="Casas Cadastradas" value={houses.length.toString()} />
    </div>
 
-   <DropZone onImageDropped={handleImageDropped} isProcessing={isProcessing} />
+   <div className="grid gap-6 lg:grid-cols-[1fr_400px] flex-1 min-h-0">
+    <div className="overflow-y-auto pr-2">
+     <HouseList
+      houses={houses}
+      onAdd={handleAdd}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
+     />
+    </div>
 
-   <HouseList
-    houses={houses}
-    onAdd={handleAdd}
-    onEdit={handleEdit}
-    onDelete={handleDelete}
-   />
+    <div className="flex flex-col gap-2 h-full min-h-0">
+     <h3 className="font-semibold shrink-0">Assistente IA</h3>
+     <div className="flex-1 min-h-0">
+      <ChatInterface onBankrollDetected={(data) => {
+       setParsedData(data)
+       setIsConfirmOpen(true)
+      }} />
+     </div>
+    </div>
+   </div>
 
    <AddHouseDialog
     isOpen={isDialogOpen}
