@@ -1,9 +1,5 @@
 import type { SureBet } from '@/types'
 
-/**
- * Mock data for development and testing.
- * Will be removed once AI parsing is implemented.
- */
 export const mockBets: SureBet[] = [
   {
     id: '1',

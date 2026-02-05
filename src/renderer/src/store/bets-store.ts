@@ -23,12 +23,10 @@ interface BetsActions {
 type BetsStore = BetsState & BetsActions
 
 export const useBetsStore = create<BetsStore>((set, get) => ({
-  // State
   bets: [],
   isLoading: false,
   isInitialized: false,
 
-  // Initialize from persisted storage
   init: async () => {
     if (get().isInitialized) return
 
@@ -41,7 +39,6 @@ export const useBetsStore = create<BetsStore>((set, get) => ({
     }
   },
 
-  // Add a new bet
   addBet: async (betData) => {
     const newBet: SureBet = {
       ...betData,
@@ -55,7 +52,6 @@ export const useBetsStore = create<BetsStore>((set, get) => ({
     await window.api.store.set('bets', updatedBets)
   },
 
-  // Update an existing bet
   updateBet: async (id, updates) => {
     const updatedBets = get().bets.map((bet) =>
       bet.id === id ? { ...bet, ...updates } : bet
@@ -64,19 +60,16 @@ export const useBetsStore = create<BetsStore>((set, get) => ({
     await window.api.store.set('bets', updatedBets)
   },
 
-  // Delete a bet
   deleteBet: async (id) => {
     const updatedBets = get().bets.filter((bet) => bet.id !== id)
     set({ bets: updatedBets })
     await window.api.store.set('bets', updatedBets)
   },
 
-  // Mark winner and calculate realized profit
   markWinner: async (id, winner) => {
     const bet = get().bets.find((b) => b.id === id)
     if (!bet) return
 
-    // Calculate realized profit based on winner
     const winningHouse = winner === 'A' ? bet.houseA : bet.houseB
     const realizedProfit = winningHouse.stake * winningHouse.odds - bet.totalInvestment
 

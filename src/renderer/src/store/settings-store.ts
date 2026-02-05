@@ -18,11 +18,9 @@ interface PersistedSettings {
 }
 
 export const useSettingsStore = create<SettingsStore>((set, get) => ({
-  // State
   geminiApiKey: null,
   isInitialized: false,
 
-  // Initialize from persisted storage
   init: async () => {
     if (get().isInitialized) return
 
@@ -33,7 +31,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     })
   },
 
-  // Set API key
   setGeminiApiKey: async (key) => {
     set({ geminiApiKey: key })
 
@@ -44,7 +41,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     })
   },
 
-  // Clear API key
   clearGeminiApiKey: async () => {
     set({ geminiApiKey: null })
 

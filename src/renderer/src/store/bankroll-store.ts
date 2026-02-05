@@ -20,12 +20,10 @@ interface BankrollActions {
 type BankrollStore = BankrollState & BankrollActions
 
 export const useBankrollStore = create<BankrollStore>((set, get) => ({
-  // State
   houses: [],
   isLoading: false,
   isInitialized: false,
 
-  // Initialize from persisted storage
   init: async () => {
     if (get().isInitialized) return
 
@@ -38,7 +36,6 @@ export const useBankrollStore = create<BankrollStore>((set, get) => ({
     }
   },
 
-  // Update or create a house balance
   updateHouseBalance: async (name, balance) => {
     const now = new Date().toISOString()
     const houses = get().houses
@@ -59,7 +56,6 @@ export const useBankrollStore = create<BankrollStore>((set, get) => ({
     await window.api.store.set('houses', updatedHouses)
   },
 
-  // Bulk update from AI parsing
   updateMultipleHouses: async (updates) => {
     const now = new Date().toISOString()
     const currentHouses = [...get().houses]
@@ -80,7 +76,6 @@ export const useBankrollStore = create<BankrollStore>((set, get) => ({
     await window.api.store.set('houses', currentHouses)
   },
 
-  // Delete a house
   deleteHouse: async (name) => {
     const updatedHouses = get().houses.filter(
       (h) => h.name.toLowerCase() !== name.toLowerCase()
@@ -90,6 +85,5 @@ export const useBankrollStore = create<BankrollStore>((set, get) => ({
   }
 }))
 
-// Derived selectors
 export const selectTotalBankroll = (state: BankrollStore) =>
   state.houses.reduce((sum, house) => sum + house.balance, 0)
