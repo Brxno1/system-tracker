@@ -16,7 +16,7 @@ export function ChatInterface({ onBankrollDetected }: ChatInterfaceProps) {
   {
    id: 'welcome',
    role: 'assistant',
-   content: 'Olá! Posso ajudar a atualizar sua banca. Me envie um print das suas contas.',
+   content: 'Olá! Sou seu assistente de banca.\nMe envie um print das suas contas para eu atualizar seus saldos automaticamente.',
    timestamp: new Date()
   }
  ])
@@ -42,7 +42,6 @@ export function ChatInterface({ onBankrollDetected }: ChatInterfaceProps) {
   setIsLoading(true)
 
   try {
-   // Logic to determine what to do. For now, if image exists, try Bankroll parsing.
    if (attachments.length > 0) {
     // Assume first image is bankroll for this MVP
     const result = await parseBankrollScreenshot(attachments[0])
@@ -59,11 +58,13 @@ export function ChatInterface({ onBankrollDetected }: ChatInterfaceProps) {
     }
     setMessages((prev) => [...prev, aiMessage])
    } else {
-    // Text-only response (mocked for now as we don't have a text-chat capability setup yet)
+    // Text-only response (mocked for now)
+    // In a real app, this would call a LLM for text generation
+    await new Promise(resolve => setTimeout(resolve, 1000)) // Fake delay
     const aiMessage: ChatMessage = {
      id: uuidv4(),
      role: 'assistant',
-     content: 'Entendi. Por enquanto só consigo analisar imagens de banca. Tem algum print para me enviar?',
+     content: 'Entendi. Por enquanto meu foco é analisar imagens de banca. Tem algum print para me enviar?',
      timestamp: new Date()
     }
     setMessages((prev) => [...prev, aiMessage])
@@ -89,10 +90,10 @@ export function ChatInterface({ onBankrollDetected }: ChatInterfaceProps) {
  }
 
  return (
-  <div className="flex h-[600px] flex-col overflow-hidden rounded-xl border bg-background shadow-sm">
-   <div className="flex-1 overflow-hidden p-4">
-    <ScrollArea className="h-full pr-4" ref={scrollRef}>
-     <div className="flex flex-col gap-4">
+  <div className="flex h-full w-full flex-col bg-background">
+   <div className="flex-1 overflow-hidden">
+    <ScrollArea className="h-full px-4" ref={scrollRef}>
+     <div className="mx-auto flex max-w-3xl flex-col gap-6 py-8">
       {messages.map((msg) => (
        <ChatBubble
         key={msg.id}
@@ -101,14 +102,18 @@ export function ChatInterface({ onBankrollDetected }: ChatInterfaceProps) {
        />
       ))}
       {isLoading && (
-       <div className="flex items-center gap-2 p-4 text-xs text-muted-foreground">
-        <span className="animate-pulse">Processando...</span>
+       <div className="flex items-center gap-2 px-4 text-xs text-muted-foreground">
+        <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground delay-75" />
+        <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground delay-150" />
+        <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground delay-200" />
        </div>
       )}
+      <div className="h-4" /> {/* Spacer for bottom scroll */}
      </div>
     </ScrollArea>
    </div>
-   <div className="border-t bg-muted/30 p-4">
+
+   <div className="border-t bg-background/50 p-4 pb-6 backdrop-blur-sm supports-[backdrop-filter]:bg-background/20">
     <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
    </div>
   </div>

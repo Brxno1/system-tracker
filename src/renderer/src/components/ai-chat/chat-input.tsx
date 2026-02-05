@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Send, Paperclip, X, Image as ImageIcon } from 'lucide-react'
+import { ArrowUp, Paperclip, X, Image as ImageIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
@@ -81,73 +81,79 @@ export function ChatInput({ onSendMessage, isLoading }: ChatInputProps) {
  }
 
  return (
-  <div className="rounded-lg border bg-background p-4 shadow-sm focus-within:ring-1 focus-within:ring-ring">
-   {attachments.length > 0 && (
-    <div className="mb-4 flex flex-wrap gap-2">
-     {attachments.map((att, i) => (
-      <div key={i} className="relative h-20 w-20 overflow-hidden rounded-md border">
-       <img src={att} alt="Attachment" className="h-full w-full object-cover" />
-       <Button
-        size="icon"
-        variant="destructive"
-        className="absolute right-0 top-0 h-5 w-5 rounded-bl-md rounded-tr-md p-0"
-        onClick={() => removeAttachment(i)}
-       >
-        <X className="h-3 w-3" />
-       </Button>
-      </div>
-     ))}
+  <div className="mx-auto w-full max-w-3xl">
+   <div className="relative flex w-full flex-col gap-2 rounded-xl border bg-background p-3 shadow-sm ring-1 ring-input transition-all focus-within:ring-2 focus-within:ring-primary/20">
+
+    {attachments.length > 0 && (
+     <div className="flex flex-wrap gap-2 px-1 pb-2">
+      {attachments.map((att, i) => (
+       <div key={i} className="group relative h-16 w-16 overflow-hidden rounded-lg border bg-muted">
+        <img src={att} alt="Attachment" className="h-full w-full object-cover" />
+        <Button
+         size="icon"
+         variant="destructive"
+         className="absolute right-0 top-0 h-4 w-4 rounded-none rounded-bl-md opacity-0 transition-opacity group-hover:opacity-100"
+         onClick={() => removeAttachment(i)}
+        >
+         <X className="h-2 w-2" />
+        </Button>
+       </div>
+      ))}
+     </div>
+    )}
+
+    <div className="flex gap-2">
+     <input
+      type="file"
+      ref={fileInputRef}
+      className="hidden"
+      accept="image/*"
+      onChange={handleFileSelect}
+     />
+     <Button
+      variant="ghost"
+      size="icon"
+      className="h-9 w-9 shrink-0 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      onClick={() => fileInputRef.current?.click()}
+      disabled={isLoading}
+      title="Anexar imagem"
+     >
+      <Paperclip className="h-5 w-5" />
+     </Button>
+
+     <Textarea
+      ref={textareaRef}
+      value={message}
+      onChange={(e) => setMessage(e.target.value)}
+      onKeyDown={handleKeyDown}
+      onPaste={handlePaste}
+      placeholder="Pergunte algo ou envie um print da sua banca..."
+      className="min-h-[36px] w-full resize-none border-0 bg-transparent py-2 text-base shadow-none focus-visible:ring-0 placeholder:text-muted-foreground/50"
+      rows={1}
+      disabled={isLoading}
+     />
+
+     <Button
+      size="icon"
+      className={cn(
+       'h-9 w-9 shrink-0 rounded-lg transition-all',
+       message.trim() || attachments.length > 0
+        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+        : 'bg-muted text-muted-foreground hover:bg-muted hover:text-muted-foreground'
+      )}
+      onClick={handleSend}
+      disabled={(!message.trim() && attachments.length === 0) || isLoading}
+     >
+      <ArrowUp className="h-4 w-4" />
+     </Button>
     </div>
-   )}
-
-   <div className="flex gap-2">
-    <input
-     type="file"
-     ref={fileInputRef}
-     className="hidden"
-     accept="image/*"
-     onChange={handleFileSelect}
-    />
-    <Button
-     variant="ghost"
-     size="icon"
-     className="h-10 w-10 shrink-0 text-muted-foreground hover:text-foreground"
-     onClick={() => fileInputRef.current?.click()}
-     disabled={isLoading}
-    >
-     <Paperclip className="h-5 w-5" />
-    </Button>
-
-    <Textarea
-     ref={textareaRef}
-     value={message}
-     onChange={(e) => setMessage(e.target.value)}
-     onKeyDown={handleKeyDown}
-     onPaste={handlePaste}
-     placeholder="Digite uma mensagem ou cole uma imagem..."
-     className="min-h-[40px] w-full resize-none border-0 bg-transparent py-2 shadow-none focus-visible:ring-0"
-     rows={1}
-     disabled={isLoading}
-    />
-
-    <Button
-     size="icon"
-     className={cn('h-10 w-10 shrink-0', isLoading && 'opacity-50')}
-     onClick={handleSend}
-     disabled={(!message.trim() && attachments.length === 0) || isLoading}
-    >
-     <Send className="h-5 w-5" />
-    </Button>
    </div>
 
-   <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-    <div className="flex items-center gap-2">
-     {/* Placeholder for model selection as requested */}
-     <span className="flex items-center gap-1 rounded bg-muted px-2 py-1">
-      <ImageIcon className="h-3 w-3" /> Gemini 1.5 Pro
-     </span>
+   <div className="mt-2 flex items-center justify-center gap-4 text-[10px] text-muted-foreground/60 sm:justify-end">
+    <div className="flex items-center gap-1.5 rounded-full border bg-muted/20 px-2 py-0.5">
+     <ImageIcon className="h-3 w-3" />
+     <span className="font-medium">Gemini 1.5 Pro</span>
     </div>
-    <span>Enter para enviar, Shift + Enter para quebra de linha</span>
    </div>
   </div>
  )
