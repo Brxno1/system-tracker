@@ -1,67 +1,70 @@
 import {
- useReactTable,
- getCoreRowModel,
- flexRender
+  useReactTable,
+  getCoreRowModel,
+  flexRender
 } from '@tanstack/react-table'
 import type { SureBet } from '@/types'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
 import { columns } from './columns'
 
 interface BetsTableProps {
- data: SureBet[]
+  data: SureBet[]
 }
 
 export function BetsTable({ data }: BetsTableProps) {
- const table = useReactTable({
-  data,
-  columns,
-  getCoreRowModel: getCoreRowModel()
- })
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel()
+  })
 
- return (
-  <div className="rounded-lg border border-border">
-   <table className="w-full">
-    <thead>
-     {table.getHeaderGroups().map((headerGroup) => (
-      <tr key={headerGroup.id} className="border-b border-border">
-       {headerGroup.headers.map((header) => (
-        <th
-         key={header.id}
-         className="px-4 py-3 text-left text-sm font-medium text-muted-foreground"
-        >
-         {header.isPlaceholder
-          ? null
-          : flexRender(header.column.columnDef.header, header.getContext())}
-        </th>
-       ))}
-      </tr>
-     ))}
-    </thead>
-    <tbody>
-     {table.getRowModel().rows.length ? (
-      table.getRowModel().rows.map((row) => (
-       <tr
-        key={row.id}
-        className="border-b border-border transition-colors hover:bg-muted/50"
-       >
-        {row.getVisibleCells().map((cell) => (
-         <td key={cell.id} className="px-4 py-3 text-sm">
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-         </td>
-        ))}
-       </tr>
-      ))
-     ) : (
-      <tr>
-       <td
-        colSpan={columns.length}
-        className="px-4 py-8 text-center text-muted-foreground"
-       >
-        Nenhuma aposta registrada ainda.
-       </td>
-      </tr>
-     )}
-    </tbody>
-   </table>
-  </div>
- )
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id} className="font-semibold text-muted-foreground">
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && 'selected'}
+                className="transition-colors hover:bg-muted/50"
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                Nenhuma aposta registrada ainda.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  )
 }
