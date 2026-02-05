@@ -1,0 +1,1 @@
+export { registerStoreHandlers } from './store'
