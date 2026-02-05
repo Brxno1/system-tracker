@@ -1,9 +1,14 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
-import { useBankrollStore, selectTotalBankroll } from '@/store'
-import { KPICard } from '@/components/dashboard/kpi-card'
+import { Settings2 } from 'lucide-react'
+import { useBankrollStore } from '@/store'
 import { Button } from '@/components/ui/button'
-import { formatCurrency } from '@/lib/utils'
+import {
+ Sheet,
+ SheetContent,
+ SheetHeader,
+ SheetTitle,
+ SheetTrigger
+} from '@/components/ui/sheet'
 import { HouseList } from './house-list'
 import { AddHouseDialog } from './add-house-dialog'
 import { ConfirmDialog } from './update-flow/confirm-dialog'
@@ -16,7 +21,6 @@ export function Bankroll() {
  const updateHouseBalance = useBankrollStore((state) => state.updateHouseBalance)
  const updateMultipleHouses = useBankrollStore((state) => state.updateMultipleHouses)
  const deleteHouse = useBankrollStore((state) => state.deleteHouse)
- const totalBankroll = useBankrollStore(selectTotalBankroll)
 
  const [isDialogOpen, setIsDialogOpen] = useState(false)
  const [houseToEdit, setHouseToEdit] = useState<HouseBalance | null>(null)
@@ -61,39 +65,44 @@ export function Bankroll() {
  }
 
  return (
-  <div className="space-y-6 h-[calc(100vh-100px)] flex flex-col">
-   <div className="flex items-center justify-between shrink-0">
-    <h1 className="text-2xl font-bold tracking-tight">Gestão de Banca</h1>
-    <Button onClick={handleAdd}>
-     <Plus className="mr-2 h-4 w-4" />
-     Adicionar Manualmente
-    </Button>
+  <div className="flex h-[calc(100vh-60px)] flex-col gap-4">
+   {/* Header with Title and Settings Trigger */}
+   <div className="flex items-center justify-between px-2 pt-2">
+    <h1 className="text-xl font-semibold tracking-tight">Assistente de Banca</h1>
+
+    <Sheet>
+     <SheetTrigger asChild>
+      <Button variant="ghost" size="icon" title="Gerenciar Casas Manualmente">
+       <Settings2 className="h-5 w-5" />
+      </Button>
+     </SheetTrigger>
+     <SheetContent side="right" className="w-[400px] sm:w-[540px]">
+      <SheetHeader>
+       <SheetTitle>Gerenciar Casas & Saldos</SheetTitle>
+      </SheetHeader>
+      <div className="mt-6 flex flex-col gap-4">
+       <Button onClick={handleAdd} className="w-full">
+        Adicionar Nova Casa
+       </Button>
+       <div className="h-[calc(100vh-200px)] overflow-y-auto pr-2">
+        <HouseList
+         houses={houses}
+         onAdd={handleAdd}
+         onEdit={handleEdit}
+         onDelete={handleDelete}
+        />
+       </div>
+      </div>
+     </SheetContent>
+    </Sheet>
    </div>
 
-   <div className="grid gap-4 md:grid-cols-3 shrink-0">
-    <KPICard label="Banca Total" value={formatCurrency(totalBankroll)} />
-    <KPICard label="Casas Cadastradas" value={houses.length.toString()} />
-   </div>
-
-   <div className="grid gap-6 lg:grid-cols-[1fr_400px] flex-1 min-h-0">
-    <div className="overflow-y-auto pr-2">
-     <HouseList
-      houses={houses}
-      onAdd={handleAdd}
-      onEdit={handleEdit}
-      onDelete={handleDelete}
-     />
-    </div>
-
-    <div className="flex flex-col gap-2 h-full min-h-0">
-     <h3 className="font-semibold shrink-0">Assistente IA</h3>
-     <div className="flex-1 min-h-0">
-      <ChatInterface onBankrollDetected={(data) => {
-       setParsedData(data)
-       setIsConfirmOpen(true)
-      }} />
-     </div>
-    </div>
+   {/* Main Chat Interface - Full Screen */}
+   <div className="flex-1 overflow-hidden rounded-xl border bg-background shadow-sm">
+    <ChatInterface onBankrollDetected={(data) => {
+     setParsedData(data)
+     setIsConfirmOpen(true)
+    }} />
    </div>
 
    <AddHouseDialog
