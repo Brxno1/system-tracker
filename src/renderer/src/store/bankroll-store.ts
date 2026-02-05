@@ -8,10 +8,7 @@ interface BankrollState {
 }
 
 interface BankrollActions {
-  // Initialization
   init: () => Promise<void>
-
-  // CRUD
   updateHouseBalance: (name: string, balance: number) => Promise<void>
   updateMultipleHouses: (updates: Array<{ name: string; balance: number }>) => Promise<void>
   deleteHouse: (name: string) => Promise<void>

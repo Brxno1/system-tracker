@@ -1,6 +1,6 @@
 export interface SureBet {
   id: string
-  createdAt: string // ISO Date string
+  createdAt: string
   event: string
   houseA: {
     name: string
@@ -23,7 +23,7 @@ export interface SureBet {
 export interface HouseBalance {
   name: string
   balance: number
-  updatedAt: string // ISO Date string
+  updatedAt: string
 }
 
 export type BetStatus = SureBet['status']

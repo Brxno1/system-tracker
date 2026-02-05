@@ -11,7 +11,7 @@ export function AppShell({ children }: AppShellProps) {
  const initBankroll = useBankrollStore((state) => state.init)
  const initSettings = useSettingsStore((state) => state.init)
 
- // Initialize all stores on mount
+
  useEffect(() => {
   initBets()
   initBankroll()
