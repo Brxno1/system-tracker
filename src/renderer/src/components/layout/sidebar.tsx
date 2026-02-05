@@ -1,5 +1,6 @@
 import { LayoutDashboard, Wallet, Settings, TrendingUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
 type NavItem = {
   label: string
@@ -31,13 +32,13 @@ export function Sidebar() {
       </nav>
 
       <div className="border-t p-4">
-        <div className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-sidebar-accent/50">
-          <div className="h-8 w-8 rounded-full bg-muted/50" />
-          <div className="flex flex-col text-sm">
+        <Button variant="ghost" className="w-full justify-start gap-3 px-2">
+          <div className="h-6 w-6 rounded-full bg-muted" />
+          <div className="flex flex-col items-start text-xs">
             <span className="font-medium">User</span>
-            <span className="text-xs text-muted-foreground">Pro Plan</span>
+            <span className="text-muted-foreground">Pro Plan</span>
           </div>
-        </div>
+        </Button>
       </div>
     </aside>
   )
@@ -47,16 +48,16 @@ function NavLink({ item }: { item: NavItem }) {
   const Icon = item.icon
 
   return (
-    <button
+    <Button
+      variant={item.active ? 'secondary' : 'ghost'}
       className={cn(
-        'group flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
-        item.active
-          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-          : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+        'w-full justify-start gap-3',
+        item.active && 'bg-sidebar-accent text-sidebar-accent-foreground',
+        !item.active && 'text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
       )}
     >
       <Icon className="h-4 w-4" />
       {item.label}
-    </button>
+    </Button>
   )
 }
