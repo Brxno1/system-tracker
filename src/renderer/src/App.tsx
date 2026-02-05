@@ -1,15 +1,22 @@
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import { AppShell } from '@/components/layout'
 import { useBetsStore, useBankrollStore, selectTotalBankroll } from '@/store'
 import { BetsTable } from '@/components/dashboard/bets-table'
 import { KPICard } from '@/components/dashboard/kpi-card'
+import { Bankroll } from '@/components/bankroll'
 import { mockBets } from '@/lib/mock-data'
 import { formatCurrency } from '@/lib/utils'
 
 function App() {
   return (
-    <AppShell>
-      <Dashboard />
-    </AppShell>
+    <HashRouter>
+      <AppShell>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/bankroll" element={<Bankroll />} />
+        </Routes>
+      </AppShell>
+    </HashRouter>
   )
 }
 
