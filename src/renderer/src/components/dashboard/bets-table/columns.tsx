@@ -1,11 +1,24 @@
 import { ColumnDef } from '@tanstack/react-table'
+import { ArrowUpDown } from 'lucide-react'
 import type { SureBet } from '@/types'
 import { cn, formatCurrency } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
 export const columns: ColumnDef<SureBet>[] = [
  {
   accessorKey: 'createdAt',
-  header: 'Data',
+  header: ({ column }) => {
+   return (
+    <Button
+     variant="ghost"
+     onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+     className="p-0 hover:bg-transparent"
+    >
+     Data
+     <ArrowUpDown className="ml-2 h-4 w-4" />
+    </Button>
+   )
+  },
   cell: ({ row }) => {
    const date = new Date(row.getValue('createdAt'))
    return (
@@ -17,7 +30,19 @@ export const columns: ColumnDef<SureBet>[] = [
  },
  {
   id: 'houseA',
-  header: 'Casa A',
+  accessorFn: (row) => row.houseA.stake,
+  header: ({ column }) => {
+   return (
+    <Button
+     variant="ghost"
+     onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+     className="p-0 hover:bg-transparent"
+    >
+     Casa A
+     <ArrowUpDown className="ml-2 h-4 w-4" />
+    </Button>
+   )
+  },
   cell: ({ row }) => {
    const bet = row.original
    return (
@@ -36,7 +61,19 @@ export const columns: ColumnDef<SureBet>[] = [
  },
  {
   id: 'houseB',
-  header: 'Casa B',
+  accessorFn: (row) => row.houseB.stake,
+  header: ({ column }) => {
+   return (
+    <Button
+     variant="ghost"
+     onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+     className="p-0 hover:bg-transparent"
+    >
+     Casa B
+     <ArrowUpDown className="ml-2 h-4 w-4" />
+    </Button>
+   )
+  },
   cell: ({ row }) => {
    const bet = row.original
    return (
@@ -55,7 +92,19 @@ export const columns: ColumnDef<SureBet>[] = [
  },
  {
   id: 'roi',
-  header: 'ROI',
+  accessorKey: 'roi',
+  header: ({ column }) => {
+   return (
+    <Button
+     variant="ghost"
+     onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+     className="p-0 hover:bg-transparent"
+    >
+     ROI
+     <ArrowUpDown className="ml-2 h-4 w-4" />
+    </Button>
+   )
+  },
   cell: ({ row }) => {
    const bet = row.original
    const roi = (bet.projectedProfit / bet.totalInvestment) * 100
@@ -68,7 +117,19 @@ export const columns: ColumnDef<SureBet>[] = [
  },
  {
   id: 'profit',
-  header: 'Lucro',
+  accessorFn: (row) => row.status === 'WON' ? row.realizedProfit ?? 0 : row.projectedProfit,
+  header: ({ column }) => {
+   return (
+    <Button
+     variant="ghost"
+     onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+     className="p-0 hover:bg-transparent"
+    >
+     Lucro
+     <ArrowUpDown className="ml-2 h-4 w-4" />
+    </Button>
+   )
+  },
   cell: ({ row }) => {
    const bet = row.original
    const profit = bet.status === 'WON' ? bet.realizedProfit ?? 0 : bet.projectedProfit
